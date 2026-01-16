@@ -73,7 +73,7 @@ describe('TaskItem', () => {
     expect(onToggleComplete).toHaveBeenCalledWith('test-1');
   });
 
-  it('calls onDelete when delete button is clicked', async () => {
+  it('calls onDelete when delete is confirmed', async () => {
     const onDelete = jest.fn();
     render(
       <TaskItem
@@ -83,8 +83,11 @@ describe('TaskItem', () => {
       />
     );
 
-    const deleteButton = screen.getByRole('button', { name: /delete/i });
+    const deleteButton = screen.getByRole('button', { name: /delete task/i });
     await userEvent.click(deleteButton);
+
+    const confirmButton = await screen.findByRole('button', { name: /^delete$/i });
+    await userEvent.click(confirmButton);
 
     expect(onDelete).toHaveBeenCalledWith('test-1');
   });

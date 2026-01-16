@@ -6,6 +6,17 @@ import { Button } from '@/components/ui/button';
 import { GripVertical, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
 import type { Task, TaskSection } from '@/types/task';
 import { cn } from '@/lib/utils';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface TaskItemProps {
   task: Task;
@@ -72,13 +83,14 @@ export function TaskItem({
       </span>
 
       {showMoveButtons && onMoveToSection && (
-        <div className="flex gap-1 opacity-0 group-hover:opacity-100 sm:hidden group-focus-within:opacity-100 transition-opacity">
+        <div className="flex gap-1 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100 transition-opacity">
           {task.section === 'other' && canMoveToMustDo && (
             <Button
               variant="ghost"
               size="icon-sm"
               onClick={() => onMoveToSection(task.id, 'mustDo')}
               aria-label="Move to Must Do Today"
+              className="text-primary"
             >
               <ArrowUp className="size-4" />
             </Button>
@@ -89,6 +101,7 @@ export function TaskItem({
               size="icon-sm"
               onClick={() => onMoveToSection(task.id, 'other')}
               aria-label="Move to Other Tasks"
+              className="text-muted-foreground"
             >
               <ArrowDown className="size-4" />
             </Button>
@@ -96,15 +109,33 @@ export function TaskItem({
         </div>
       )}
 
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        onClick={handleDelete}
-        className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
-        aria-label="Delete task"
-      >
-        <Trash2 className="size-4" />
-      </Button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+            aria-label="Delete task"
+          >
+            <Trash2 className="size-4" />
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete task?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete &quot;{task.text.length > 50 ? task.text.slice(0, 50) + '...' : task.text}&quot;.
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

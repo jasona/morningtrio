@@ -108,17 +108,17 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 3.13 Write unit tests for TaskItem - test checkbox toggle, delete action
   - [x] 3.14 Verify responsive layout on mobile and desktop viewports
 
-- [ ] 4.0 Task Management Features (FR-1 through FR-10)
-  - [ ] 4.1 Implement add task to "Other Tasks" by default (FR-4)
-  - [ ] 4.2 Implement optional add to "Must Do Today" if fewer than 3 tasks (FR-2)
-  - [ ] 4.3 Implement task completion toggle with checkbox (FR-5)
-  - [ ] 4.4 Implement task deletion with confirmation dialog (FR-9, FR-10)
-  - [ ] 4.5 Implement "Clear Completed" button (FR-7)
-  - [ ] 4.6 Add confirmation dialog for Clear Completed when >1 task (FR-8)
-  - [ ] 4.7 Display "Top 3 is full" message when attempting to add 4th task to Must Do (FR-16)
-  - [ ] 4.8 Add mobile-specific "Move to Top 3" / "Move to Other" buttons on TaskItem (FR-15)
-  - [ ] 4.9 Write integration tests for task CRUD operations
-  - [ ] 4.10 Verify all task management features work correctly
+- [x] 4.0 Task Management Features (FR-1 through FR-10)
+  - [x] 4.1 Implement add task to "Other Tasks" by default (FR-4)
+  - [x] 4.2 Implement optional add to "Must Do Today" if fewer than 3 tasks (FR-2)
+  - [x] 4.3 Implement task completion toggle with checkbox (FR-5)
+  - [x] 4.4 Implement task deletion with confirmation dialog (FR-9, FR-10)
+  - [x] 4.5 Implement "Clear Completed" button (FR-7)
+  - [x] 4.6 Add confirmation dialog for Clear Completed when >1 task (FR-8)
+  - [x] 4.7 Display "Top 3 is full" message when attempting to add 4th task to Must Do (FR-16)
+  - [x] 4.8 Add mobile-specific "Move to Top 3" / "Move to Other" buttons on TaskItem (FR-15)
+  - [x] 4.9 Write integration tests for task CRUD operations
+  - [x] 4.10 Verify all task management features work correctly
 
 - [ ] 5.0 Drag-and-Drop & Reordering (FR-11 through FR-16)
   - [ ] 5.1 Install and configure @dnd-kit: wrap app with DndContext provider
