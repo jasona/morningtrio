@@ -70,16 +70,16 @@ Update the file after completing each sub-task, not just after completing an ent
 - [x] 0.0 Create feature branch
   - [x] 0.1 Create and checkout a new branch: `git checkout -b feature/morningtrio`
 
-- [ ] 1.0 Project Setup & Configuration (FR-28, FR-33)
-  - [ ] 1.1 Initialize Next.js project with TypeScript: `npx create-next-app@latest --typescript --tailwind --app`
-  - [ ] 1.2 Install core dependencies: `npm install dexie @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities uuid`
-  - [ ] 1.3 Install dev dependencies: `npm install -D @types/uuid jest @testing-library/react @testing-library/jest-dom`
-  - [ ] 1.4 Initialize shadcn/ui: `npx shadcn-ui@latest init` with warm color theme
-  - [ ] 1.5 Configure `tailwind.config.js` with warm color palette (#FAFAF8 background, coral/amber accents)
-  - [ ] 1.6 Update `src/styles/globals.css` with base styles and CSS variables for warm theme
-  - [ ] 1.7 Configure `next.config.js` for static export (`output: 'export'`)
-  - [ ] 1.8 Create `src/types/task.ts` with Task and AppState TypeScript interfaces
-  - [ ] 1.9 Verify project builds without errors: `npm run build`
+- [x] 1.0 Project Setup & Configuration (FR-28, FR-33)
+  - [x] 1.1 Initialize Next.js project with TypeScript: `npx create-next-app@latest --typescript --tailwind --app`
+  - [x] 1.2 Install core dependencies: `npm install dexie @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities uuid`
+  - [x] 1.3 Install dev dependencies: `npm install -D @types/uuid jest @testing-library/react @testing-library/jest-dom`
+  - [x] 1.4 Initialize shadcn/ui: `npx shadcn-ui@latest init` with warm color theme
+  - [x] 1.5 Configure `tailwind.config.js` with warm color palette (#FAFAF8 background, coral/amber accents)
+  - [x] 1.6 Update `src/styles/globals.css` with base styles and CSS variables for warm theme
+  - [x] 1.7 Configure `next.config.js` for static export (`output: 'export'`)
+  - [x] 1.8 Create `src/types/task.ts` with Task and AppState TypeScript interfaces
+  - [x] 1.9 Verify project builds without errors: `npm run build`
 
 - [ ] 2.0 Database & Data Layer (FR-28, FR-31, FR-32)
   - [ ] 2.1 Create `src/lib/db.ts` with Dexie.js database class and schema for tasks table
