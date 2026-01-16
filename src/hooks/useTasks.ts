@@ -4,14 +4,30 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '@/lib/db';
 import type { Task, TaskSection } from '@/types/task';
 import { generateId, getTodayString } from '@/lib/utils';
+import { useAuth } from './useAuth';
 
 export function useTasks() {
-  const tasks = useLiveQuery(() => db.tasks.orderBy('orderIndex').toArray(), []);
+  const { userId } = useAuth();
+
+  const tasks = useLiveQuery(
+    () => {
+      if (!userId) return [];
+      return db.tasks
+        .where('userId')
+        .equals(userId)
+        .sortBy('orderIndex');
+    },
+    [userId]
+  );
 
   const mustDoTasks = tasks?.filter((t) => t.section === 'mustDo') ?? [];
   const otherTasks = tasks?.filter((t) => t.section === 'other') ?? [];
 
   async function addTask(text: string, section: TaskSection = 'other'): Promise<Task> {
+    if (!userId) {
+      throw new Error('User must be authenticated to add tasks');
+    }
+
     const sectionTasks = section === 'mustDo' ? mustDoTasks : otherTasks;
     const maxOrder = sectionTasks.length > 0
       ? Math.max(...sectionTasks.map((t) => t.orderIndex))
@@ -19,6 +35,7 @@ export function useTasks() {
 
     const newTask: Task = {
       id: generateId(),
+      userId,
       text,
       completed: false,
       section,
@@ -30,7 +47,7 @@ export function useTasks() {
     return newTask;
   }
 
-  async function updateTask(id: string, updates: Partial<Omit<Task, 'id'>>): Promise<void> {
+  async function updateTask(id: string, updates: Partial<Omit<Task, 'id' | 'userId'>>): Promise<void> {
     await db.tasks.update(id, updates);
   }
 
@@ -68,7 +85,45 @@ export function useTasks() {
   }
 
   async function getIncompleteTasks(): Promise<Task[]> {
-    return db.tasks.filter((t) => !t.completed).toArray();
+    if (!userId) return [];
+    return db.tasks
+      .where('userId')
+      .equals(userId)
+      .filter((t) => !t.completed)
+      .toArray();
+  }
+
+  // Check if there are unclaimed local tasks (for migration modal)
+  async function getLocalTasks(): Promise<Task[]> {
+    return db.tasks
+      .where('userId')
+      .equals('local')
+      .toArray();
+  }
+
+  // Claim local tasks for the current user
+  async function claimLocalTasks(): Promise<void> {
+    if (!userId) return;
+    await db.transaction('rw', db.tasks, async () => {
+      const localTasks = await db.tasks
+        .where('userId')
+        .equals('local')
+        .toArray();
+
+      for (const task of localTasks) {
+        await db.tasks.update(task.id, { userId });
+      }
+    });
+  }
+
+  // Clear all local tasks without claiming
+  async function clearLocalTasks(): Promise<void> {
+    const localTasks = await db.tasks
+      .where('userId')
+      .equals('local')
+      .toArray();
+
+    await db.tasks.bulkDelete(localTasks.map((t) => t.id));
   }
 
   return {
@@ -84,5 +139,8 @@ export function useTasks() {
     reorderTasks,
     clearCompleted,
     getIncompleteTasks,
+    getLocalTasks,
+    claimLocalTasks,
+    clearLocalTasks,
   };
 }

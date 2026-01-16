@@ -1,6 +1,9 @@
-const CACHE_NAME = 'morningtrio-v1';
+const CACHE_NAME = 'morningtrio-v2';
 const STATIC_ASSETS = [
   '/',
+  '/app',
+  '/login',
+  '/register',
   '/manifest.json',
   '/icons/icon-192x192.svg',
   '/icons/icon-512x512.svg',
@@ -31,6 +34,13 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
+  const url = new URL(event.request.url);
+
+  // Skip caching for API routes - always go to network
+  if (url.pathname.startsWith('/api/')) {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -50,7 +60,8 @@ self.addEventListener('fetch', (event) => {
         return response;
       }).catch(() => {
         if (event.request.destination === 'document') {
-          return caches.match('/');
+          // For document requests, try to return the app page or landing page
+          return caches.match('/app') || caches.match('/');
         }
       });
     })

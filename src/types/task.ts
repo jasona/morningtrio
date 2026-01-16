@@ -2,6 +2,7 @@ export type TaskSection = 'mustDo' | 'other';
 
 export interface Task {
   id: string;
+  userId: string;
   text: string;
   completed: boolean;
   section: TaskSection;

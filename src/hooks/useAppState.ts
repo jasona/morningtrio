@@ -1,26 +1,36 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { AppState } from '@/types/task';
 import { getTodayString, isNewDay } from '@/lib/utils';
+import { useAuth } from './useAuth';
 
-const APP_STATE_KEY = 'morningtrio-app-state';
+const APP_STATE_KEY_PREFIX = 'morningtrio-app-state';
+
+function getAppStateKey(userId: string | null): string {
+  return userId ? `${APP_STATE_KEY_PREFIX}-${userId}` : APP_STATE_KEY_PREFIX;
+}
 
 function getInitialState(): AppState {
+  return {
+    currentDate: getTodayString(),
+    lastPlanningDate: null,
+    isPlanningComplete: false,
+  };
+}
+
+function loadAppState(userId: string | null): AppState {
   if (typeof window === 'undefined') {
-    return {
-      currentDate: getTodayString(),
-      lastPlanningDate: null,
-      isPlanningComplete: false,
-    };
+    return getInitialState();
   }
 
   try {
-    const stored = localStorage.getItem(APP_STATE_KEY);
+    const key = getAppStateKey(userId);
+    const stored = localStorage.getItem(key);
     if (stored) {
       const parsed = JSON.parse(stored) as AppState;
       const today = getTodayString();
-      
+
       if (parsed.currentDate !== today) {
         return {
           currentDate: today,
@@ -34,22 +44,29 @@ function getInitialState(): AppState {
     // Ignore parse errors
   }
 
-  return {
-    currentDate: getTodayString(),
-    lastPlanningDate: null,
-    isPlanningComplete: false,
-  };
+  return getInitialState();
 }
 
-function saveAppState(state: AppState): void {
+function saveAppState(state: AppState, userId: string | null): void {
   if (typeof window !== 'undefined') {
-    localStorage.setItem(APP_STATE_KEY, JSON.stringify(state));
+    const key = getAppStateKey(userId);
+    localStorage.setItem(key, JSON.stringify(state));
   }
 }
 
 export function useAppState() {
+  const { userId, isLoading: authLoading } = useAuth();
   const [state, setState] = useState<AppState>(getInitialState);
-  const [isHydrated] = useState(() => typeof window !== 'undefined');
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Load state when userId changes (user logs in/out)
+  useEffect(() => {
+    if (!authLoading) {
+      const loadedState = loadAppState(userId);
+      setState(loadedState);
+      setIsHydrated(true);
+    }
+  }, [userId, authLoading]);
 
   const needsPlanning = isHydrated && isNewDay(state.lastPlanningDate) && !state.isPlanningComplete;
 
@@ -61,10 +78,10 @@ export function useAppState() {
         lastPlanningDate: today,
         isPlanningComplete: true,
       };
-      saveAppState(newState);
+      saveAppState(newState, userId);
       return newState;
     });
-  }, []);
+  }, [userId]);
 
   const skipPlanning = useCallback(() => {
     setState((prev) => {
@@ -72,10 +89,10 @@ export function useAppState() {
         ...prev,
         isPlanningComplete: true,
       };
-      saveAppState(newState);
+      saveAppState(newState, userId);
       return newState;
     });
-  }, []);
+  }, [userId]);
 
   const resetForNewDay = useCallback(() => {
     const today = getTodayString();
@@ -85,10 +102,10 @@ export function useAppState() {
         lastPlanningDate: prev.lastPlanningDate,
         isPlanningComplete: false,
       };
-      saveAppState(newState);
+      saveAppState(newState, userId);
       return newState;
     });
-  }, []);
+  }, [userId]);
 
   return {
     ...state,

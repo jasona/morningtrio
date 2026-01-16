@@ -2,7 +2,7 @@
   "name": "MorningTrio - Daily Task Tracker",
   "short_name": "MorningTrio",
   "description": "Focus on your top 3 priorities each day",
-  "start_url": "/",
+  "start_url": "/app",
   "display": "standalone",
   "background_color": "#FAFAF8",
   "theme_color": "#f97316",
@@ -28,8 +28,8 @@
       "name": "Add Task",
       "short_name": "Add",
       "description": "Quickly add a new task",
-      "url": "/?action=add",
-      "icons": [{ "src": "/icons/icon-192x192.png", "sizes": "192x192" }]
+      "url": "/app?action=add",
+      "icons": [{ "src": "/icons/icon-192x192.svg", "sizes": "192x192" }]
     }
   ]
 }
