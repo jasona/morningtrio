@@ -169,16 +169,16 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 8.9 Verify standalone mode opens without browser chrome (FR-35)
   - [x] 8.10 Run Lighthouse PWA audit and achieve >90 score
 
-- [ ] 9.0 Testing & Quality Assurance (TASKS-4)
-  - [ ] 9.1 Configure Jest with React Testing Library
-  - [ ] 9.2 Run all unit tests and fix any failures
-  - [ ] 9.3 Perform manual testing of complete user journey (Morning Planning → Task Management → Clear)
-  - [ ] 9.4 Test on mobile viewport sizes (375px, 414px widths)
-  - [ ] 9.5 Test touch interactions: tap, drag on mobile
-  - [ ] 9.6 Verify data persistence: add tasks, close browser, reopen
-  - [ ] 9.7 Test cross-browser: Chrome, Edge, Safari, Firefox
-  - [ ] 9.8 Run Lighthouse audit for performance, accessibility, PWA
-  - [ ] 9.9 Fix any accessibility issues (keyboard navigation, screen reader)
+- [x] 9.0 Testing & Quality Assurance (TASKS-4)
+  - [x] 9.1 Configure Jest with React Testing Library
+  - [x] 9.2 Run all unit tests and fix any failures
+  - [x] 9.3 Perform manual testing of complete user journey (Morning Planning → Task Management → Clear)
+  - [x] 9.4 Test on mobile viewport sizes (375px, 414px widths)
+  - [x] 9.5 Test touch interactions: tap, drag on mobile
+  - [x] 9.6 Verify data persistence: add tasks, close browser, reopen
+  - [x] 9.7 Test cross-browser: Chrome, Edge, Safari, Firefox
+  - [x] 9.8 Run Lighthouse audit for performance, accessibility, PWA
+  - [x] 9.9 Fix any accessibility issues (keyboard navigation, screen reader)
 
 - [ ] 10.0 Final Review & Documentation (TASKS-4)
   - [ ] 10.1 Review all code for consistency and best practices

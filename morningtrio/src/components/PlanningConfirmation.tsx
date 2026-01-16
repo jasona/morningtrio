@@ -21,7 +21,8 @@ export function PlanningConfirmation({
   topThreeTasks,
   onComplete,
 }: PlanningConfirmationProps) {
-  const message = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+  const messageIndex = topThreeTasks.length % motivationalMessages.length;
+  const message = motivationalMessages[messageIndex];
 
   return (
     <div className="space-y-6 text-center">

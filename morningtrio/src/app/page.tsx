@@ -58,17 +58,17 @@ export default function Home() {
     }
   }, [isHydrated, needsPlanning, isLoading, getIncompleteTasks]);
 
+  const allMustDoComplete = mustDoTasks.length === 3 && mustDoTasks.every((t) => t.completed);
+  
   useEffect(() => {
-    if (mustDoTasks.length === 3) {
-      const allComplete = mustDoTasks.every((t) => t.completed);
-      if (allComplete && !prevAllCompleteRef.current) {
+    if (allMustDoComplete && !prevAllCompleteRef.current) {
+      const timer = setTimeout(() => {
         setShowCelebration(true);
-      }
-      prevAllCompleteRef.current = allComplete;
-    } else {
-      prevAllCompleteRef.current = false;
+      }, 0);
+      return () => clearTimeout(timer);
     }
-  }, [mustDoTasks]);
+    prevAllCompleteRef.current = allMustDoComplete;
+  }, [allMustDoComplete]);
 
   const handleKeepTask = (id: string) => {
     // Task is already in the database, just update its date

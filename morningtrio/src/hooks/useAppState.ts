@@ -1,8 +1,18 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useSyncExternalStore } from 'react';
 import type { AppState } from '@/types/task';
 import { getTodayString, isNewDay } from '@/lib/utils';
+
+const emptySubscribe = () => () => {};
+let storageListeners: Array<() => void> = [];
+
+function subscribeToStorage(callback: () => void) {
+  storageListeners.push(callback);
+  return () => {
+    storageListeners = storageListeners.filter((l) => l !== callback);
+  };
+}
 
 const APP_STATE_KEY = 'morningtrio-app-state';
 
@@ -47,47 +57,63 @@ function saveAppState(state: AppState): void {
   }
 }
 
+function getServerSnapshot(): AppState {
+  return {
+    currentDate: getTodayString(),
+    lastPlanningDate: null,
+    isPlanningComplete: false,
+  };
+}
+
 export function useAppState() {
-  const [state, setState] = useState<AppState>(loadAppState);
-  const [isHydrated, setIsHydrated] = useState(false);
+  const initialState = useSyncExternalStore(
+    emptySubscribe,
+    loadAppState,
+    getServerSnapshot
+  );
+  
+  const [state, setState] = useState<AppState>(initialState);
+  
+  const isHydrated = useSyncExternalStore(
+    subscribeToStorage,
+    () => typeof window !== 'undefined',
+    () => false
+  );
 
-  useEffect(() => {
-    setState(loadAppState());
-    setIsHydrated(true);
+  const updateState = useCallback((newState: AppState) => {
+    setState(newState);
+    saveAppState(newState);
   }, []);
-
-  useEffect(() => {
-    if (isHydrated) {
-      saveAppState(state);
-    }
-  }, [state, isHydrated]);
 
   const needsPlanning = isNewDay(state.lastPlanningDate) && !state.isPlanningComplete;
 
   const completePlanning = useCallback(() => {
     const today = getTodayString();
-    setState((prev) => ({
-      ...prev,
+    const newState = {
+      ...state,
       lastPlanningDate: today,
       isPlanningComplete: true,
-    }));
-  }, []);
+    };
+    updateState(newState);
+  }, [state, updateState]);
 
   const skipPlanning = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
+    const newState = {
+      ...state,
       isPlanningComplete: true,
-    }));
-  }, []);
+    };
+    updateState(newState);
+  }, [state, updateState]);
 
   const resetForNewDay = useCallback(() => {
     const today = getTodayString();
-    setState({
+    const newState = {
       currentDate: today,
       lastPlanningDate: state.lastPlanningDate,
       isPlanningComplete: false,
-    });
-  }, [state.lastPlanningDate]);
+    };
+    updateState(newState);
+  }, [state.lastPlanningDate, updateState]);
 
   return {
     ...state,

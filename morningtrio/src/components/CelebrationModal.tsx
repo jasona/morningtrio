@@ -1,9 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { PartyPopper, Star } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 interface CelebrationModalProps {
   isOpen: boolean;
@@ -18,27 +16,20 @@ const celebrationMessages = [
   "You're on fire today! 🔥",
 ];
 
+const confettiData = Array.from({ length: 50 }, (_, i) => ({
+  id: i,
+  x: (i * 17) % 100,
+  delay: (i * 0.01) % 0.5,
+  duration: 1 + (i * 0.02) % 1,
+  colorIndex: i % 5,
+}));
+
+const colors = ['#f97316', '#fbbf24', '#fb923c', '#fdba74', '#fed7aa'];
+
 export function CelebrationModal({ isOpen, onClose }: CelebrationModalProps) {
-  const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; duration: number; color: string }>>([]);
-  const [message] = useState(() => 
-    celebrationMessages[Math.floor(Math.random() * celebrationMessages.length)]
-  );
-
-  useEffect(() => {
-    if (isOpen) {
-      const colors = ['#f97316', '#fbbf24', '#fb923c', '#fdba74', '#fed7aa'];
-      const particles = Array.from({ length: 50 }, (_, i) => ({
-        id: i,
-        x: Math.random() * 100,
-        delay: Math.random() * 0.5,
-        duration: 1 + Math.random() * 1,
-        color: colors[Math.floor(Math.random() * colors.length)],
-      }));
-      setConfetti(particles);
-    }
-  }, [isOpen]);
-
   if (!isOpen) return null;
+
+  const message = celebrationMessages[0];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -48,14 +39,14 @@ export function CelebrationModal({ isOpen, onClose }: CelebrationModalProps) {
       />
       
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {confetti.map((particle) => (
+        {confettiData.map((particle) => (
           <div
             key={particle.id}
             className="absolute w-3 h-3 rounded-full animate-confetti"
             style={{
               left: `${particle.x}%`,
               top: '-20px',
-              backgroundColor: particle.color,
+              backgroundColor: colors[particle.colorIndex],
               animationDelay: `${particle.delay}s`,
               animationDuration: `${particle.duration}s`,
             }}
