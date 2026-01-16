@@ -16,10 +16,14 @@ domain: morningtrio.com
 - `tsconfig.json` - TypeScript configuration
 - `tailwind.config.js` - Tailwind CSS configuration with warm color palette
 - `next.config.js` - Next.js configuration for static export and PWA
-- `src/lib/db.ts` - Dexie.js database setup and schema
-- `src/lib/db.test.ts` - Unit tests for database operations
-- `src/lib/utils.ts` - Utility functions (date helpers, UUID generation)
-- `src/lib/utils.test.ts` - Unit tests for utility functions
+- `morningtrio/src/lib/db.ts` - Dexie.js database setup and schema with tasks table
+- `morningtrio/src/lib/utils.ts` - Utility functions (cn, generateId, formatDate, getTodayString, isNewDay)
+- `morningtrio/src/lib/utils.test.ts` - Unit tests for utility functions (8 tests)
+- `morningtrio/src/hooks/useTasks.ts` - Task CRUD operations hook with Dexie integration
+- `morningtrio/src/hooks/useTasks.test.ts` - Unit tests for database operations (6 tests)
+- `morningtrio/src/hooks/useAppState.ts` - App state management (current date, planning state)
+- `morningtrio/jest.config.js` - Jest configuration with TypeScript and ESM support
+- `morningtrio/jest.setup.js` - Jest setup with testing-library and fake-indexeddb
 - `src/types/task.ts` - TypeScript interfaces for Task and AppState
 - `src/hooks/useTasks.ts` - Task CRUD operations hook
 - `src/hooks/useTasks.test.ts` - Unit tests for useTasks hook
@@ -81,15 +85,15 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 1.8 Create `src/types/task.ts` with Task and AppState TypeScript interfaces
   - [x] 1.9 Verify project builds without errors: `npm run build`
 
-- [ ] 2.0 Database & Data Layer (FR-28, FR-31, FR-32)
-  - [ ] 2.1 Create `src/lib/db.ts` with Dexie.js database class and schema for tasks table
-  - [ ] 2.2 Define indexed fields: id (primary), section, orderIndex, createdDate
-  - [ ] 2.3 Create `src/lib/utils.ts` with helper functions: generateId(), isNewDay(), formatDate()
-  - [ ] 2.4 Write unit tests for `src/lib/utils.ts` - test date comparison and UUID generation
-  - [ ] 2.5 Create `src/hooks/useTasks.ts` with CRUD operations: addTask, updateTask, deleteTask, toggleComplete, reorderTasks, moveToSection
-  - [ ] 2.6 Create `src/hooks/useAppState.ts` to manage currentDate, lastPlanningDate, check if planning needed
-  - [ ] 2.7 Write unit tests for useTasks hook - test add, update, delete, toggle operations
-  - [ ] 2.8 Verify data persists across browser refresh
+- [x] 2.0 Database & Data Layer (FR-28, FR-31, FR-32)
+  - [x] 2.1 Create `src/lib/db.ts` with Dexie.js database class and schema for tasks table
+  - [x] 2.2 Define indexed fields: id (primary), section, orderIndex, createdDate
+  - [x] 2.3 Create `src/lib/utils.ts` with helper functions: generateId(), isNewDay(), formatDate()
+  - [x] 2.4 Write unit tests for `src/lib/utils.ts` - test date comparison and UUID generation
+  - [x] 2.5 Create `src/hooks/useTasks.ts` with CRUD operations: addTask, updateTask, deleteTask, toggleComplete, reorderTasks, moveToSection
+  - [x] 2.6 Create `src/hooks/useAppState.ts` to manage currentDate, lastPlanningDate, check if planning needed
+  - [x] 2.7 Write unit tests for useTasks hook - test add, update, delete, toggle operations
+  - [x] 2.8 Verify data persists across browser refresh
 
 - [ ] 3.0 Core UI Components & Layout (UI-1 through UI-15, FR-1)
   - [ ] 3.1 Add shadcn/ui components: `npx shadcn-ui@latest add button checkbox input dialog alert-dialog`
