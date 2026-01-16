@@ -202,9 +202,9 @@ export function useTasks() {
     }
   }
 
-  async function getIncompleteTasks(): Promise<Task[]> {
+  const getIncompleteTasks = useCallback((): Task[] => {
     return tasks.filter((t) => !t.completed);
-  }
+  }, [tasks]);
 
   return {
     tasks,

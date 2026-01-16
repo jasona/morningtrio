@@ -18,7 +18,8 @@
       "Bash(timeout 15 npm run dev:*)",
       "Bash(taskkill:*)",
       "Bash(git add:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(npx next build)"
     ]
   }
 }

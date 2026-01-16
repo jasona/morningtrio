@@ -53,20 +53,19 @@ export default function AppPage() {
   const prevAllCompleteRef = useRef(false);
 
   useEffect(() => {
-    if (isHydrated && needsPlanning && !isLoading && !authLoading) {
-      getIncompleteTasks().then((incompleteTasks) => {
-        // Only show planning if user has existing tasks to review
-        // New users with no tasks skip directly to the main app
-        if (incompleteTasks.length > 0 || tasks.length > 0) {
-          setIncompleteTasks(incompleteTasks);
-          setShowPlanning(true);
-        } else {
-          // Auto-complete planning for new users with no tasks
-          completePlanning();
-        }
-      });
+    if (isHydrated && needsPlanning && !isLoading && !authLoading && !showPlanning) {
+      const incomplete = getIncompleteTasks();
+      // Only show planning if user has existing tasks to review
+      // New users with no tasks skip directly to the main app
+      if (incomplete.length > 0 || tasks.length > 0) {
+        setIncompleteTasks(incomplete);
+        setShowPlanning(true);
+      } else {
+        // Auto-complete planning for new users with no tasks
+        completePlanning();
+      }
     }
-  }, [isHydrated, needsPlanning, isLoading, authLoading, getIncompleteTasks, tasks.length, completePlanning]);
+  }, [isHydrated, needsPlanning, isLoading, authLoading, showPlanning, getIncompleteTasks, tasks.length, completePlanning]);
 
   const allMustDoComplete = mustDoTasks.length === 3 && mustDoTasks.every((t) => t.completed);
 
