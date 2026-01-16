@@ -24,22 +24,19 @@ domain: morningtrio.com
 - `morningtrio/src/hooks/useAppState.ts` - App state management (current date, planning state)
 - `morningtrio/jest.config.js` - Jest configuration with TypeScript and ESM support
 - `morningtrio/jest.setup.js` - Jest setup with testing-library and fake-indexeddb
-- `src/types/task.ts` - TypeScript interfaces for Task and AppState
-- `src/hooks/useTasks.ts` - Task CRUD operations hook
-- `src/hooks/useTasks.test.ts` - Unit tests for useTasks hook
-- `src/hooks/useAppState.ts` - App state management (current date, planning state)
-- `src/hooks/useAppState.test.ts` - Unit tests for useAppState hook
-- `src/components/ui/button.tsx` - shadcn/ui Button component
-- `src/components/ui/checkbox.tsx` - shadcn/ui Checkbox component
-- `src/components/ui/input.tsx` - shadcn/ui Input component
-- `src/components/ui/dialog.tsx` - shadcn/ui Dialog component
-- `src/components/ui/alert-dialog.tsx` - shadcn/ui AlertDialog for confirmations
-- `src/components/TaskItem.tsx` - Individual task item component
-- `src/components/TaskItem.test.tsx` - Unit tests for TaskItem
-- `src/components/TaskList.tsx` - Task list container with sections
-- `src/components/TaskList.test.tsx` - Unit tests for TaskList
-- `src/components/TaskInput.tsx` - Quick task capture input
-- `src/components/TaskInput.test.tsx` - Unit tests for TaskInput
+- `morningtrio/src/types/task.ts` - TypeScript interfaces for Task and AppState
+- `morningtrio/src/components/ui/button.tsx` - shadcn/ui Button component (customized with rounded-xl)
+- `morningtrio/src/components/ui/checkbox.tsx` - shadcn/ui Checkbox component (customized size-5)
+- `morningtrio/src/components/ui/input.tsx` - shadcn/ui Input component
+- `morningtrio/src/components/ui/dialog.tsx` - shadcn/ui Dialog component
+- `morningtrio/src/components/ui/alert-dialog.tsx` - shadcn/ui AlertDialog for confirmations
+- `morningtrio/src/components/TaskItem.tsx` - Individual task item with checkbox, drag handle, delete
+- `morningtrio/src/components/TaskItem.test.tsx` - Unit tests for TaskItem (7 tests)
+- `morningtrio/src/components/TaskList.tsx` - Task list with "Must Do Today" and "Other Tasks" sections
+- `morningtrio/src/components/TaskInput.tsx` - Quick task capture input with Enter submit
+- `morningtrio/src/components/TaskInput.test.tsx` - Unit tests for TaskInput (7 tests)
+- `morningtrio/src/app/layout.tsx` - Root layout with responsive container and PWA metadata
+- `morningtrio/src/app/page.tsx` - Main daily view with task management UI
 - `src/components/MorningPlanning.tsx` - Morning planning flow modal
 - `src/components/MorningPlanning.test.tsx` - Unit tests for MorningPlanning
 - `src/components/CarryoverStep.tsx` - Carryover review step component
@@ -95,21 +92,21 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 2.7 Write unit tests for useTasks hook - test add, update, delete, toggle operations
   - [x] 2.8 Verify data persists across browser refresh
 
-- [ ] 3.0 Core UI Components & Layout (UI-1 through UI-15, FR-1)
-  - [ ] 3.1 Add shadcn/ui components: `npx shadcn-ui@latest add button checkbox input dialog alert-dialog`
-  - [ ] 3.2 Customize shadcn components with warm color palette and rounded corners (8-12px)
-  - [ ] 3.3 Create `src/app/layout.tsx` with responsive container (max-width for desktop, full-width mobile)
-  - [ ] 3.4 Create `src/app/page.tsx` with main daily view layout structure
-  - [ ] 3.5 Create `src/components/TaskInput.tsx` - input field at top, Enter to submit (FR-3)
-  - [ ] 3.6 Create `src/components/TaskItem.tsx` - checkbox, text, drag handle, delete button (UI-12, UI-13)
-  - [ ] 3.7 Style TaskItem with 44px min height for touch targets (UI-14)
-  - [ ] 3.8 Add completed state styling: strikethrough, muted color, filled checkbox (UI-9)
-  - [ ] 3.9 Create `src/components/TaskList.tsx` - container with "Must Do Today" and "Other Tasks" sections (FR-1, UI-4, UI-5)
-  - [ ] 3.10 Style "Must Do Today" section with prominent card/background styling (UI-8)
-  - [ ] 3.11 Add hover/focus states to all interactive elements (UI-10)
-  - [ ] 3.12 Write unit tests for TaskInput - test submission, clearing input
-  - [ ] 3.13 Write unit tests for TaskItem - test checkbox toggle, delete action
-  - [ ] 3.14 Verify responsive layout on mobile and desktop viewports
+- [x] 3.0 Core UI Components & Layout (UI-1 through UI-15, FR-1)
+  - [x] 3.1 Add shadcn/ui components: `npx shadcn-ui@latest add button checkbox input dialog alert-dialog`
+  - [x] 3.2 Customize shadcn components with warm color palette and rounded corners (8-12px)
+  - [x] 3.3 Create `src/app/layout.tsx` with responsive container (max-width for desktop, full-width mobile)
+  - [x] 3.4 Create `src/app/page.tsx` with main daily view layout structure
+  - [x] 3.5 Create `src/components/TaskInput.tsx` - input field at top, Enter to submit (FR-3)
+  - [x] 3.6 Create `src/components/TaskItem.tsx` - checkbox, text, drag handle, delete button (UI-12, UI-13)
+  - [x] 3.7 Style TaskItem with 44px min height for touch targets (UI-14)
+  - [x] 3.8 Add completed state styling: strikethrough, muted color, filled checkbox (UI-9)
+  - [x] 3.9 Create `src/components/TaskList.tsx` - container with "Must Do Today" and "Other Tasks" sections (FR-1, UI-4, UI-5)
+  - [x] 3.10 Style "Must Do Today" section with prominent card/background styling (UI-8)
+  - [x] 3.11 Add hover/focus states to all interactive elements (UI-10)
+  - [x] 3.12 Write unit tests for TaskInput - test submission, clearing input
+  - [x] 3.13 Write unit tests for TaskItem - test checkbox toggle, delete action
+  - [x] 3.14 Verify responsive layout on mobile and desktop viewports
 
 - [ ] 4.0 Task Management Features (FR-1 through FR-10)
   - [ ] 4.1 Implement add task to "Other Tasks" by default (FR-4)
