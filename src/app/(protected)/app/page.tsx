@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useTasks } from '@/hooks/useTasks';
 import { useAppState } from '@/hooks/useAppState';
 import { useAuth } from '@/hooks/useAuth';
@@ -51,9 +51,14 @@ export default function AppPage() {
   const [incompleteTasks, setIncompleteTasks] = useState<typeof tasks>([]);
   const [showCelebration, setShowCelebration] = useState(false);
   const prevAllCompleteRef = useRef(false);
+  const planningInitializedRef = useRef(false);
 
   useEffect(() => {
-    if (isHydrated && needsPlanning && !isLoading && !authLoading && !showPlanning) {
+    // Only initialize planning once
+    if (planningInitializedRef.current) return;
+
+    if (isHydrated && needsPlanning && !isLoading && !authLoading) {
+      planningInitializedRef.current = true;
       const incomplete = getIncompleteTasks();
       // Only show planning if user has existing tasks to review
       // New users with no tasks skip directly to the main app
@@ -65,7 +70,7 @@ export default function AppPage() {
         completePlanning();
       }
     }
-  }, [isHydrated, needsPlanning, isLoading, authLoading, showPlanning, getIncompleteTasks, tasks.length, completePlanning]);
+  }, [isHydrated, needsPlanning, isLoading, authLoading, getIncompleteTasks, tasks.length, completePlanning]);
 
   const allMustDoComplete = mustDoTasks.length === 3 && mustDoTasks.every((t) => t.completed);
 
@@ -79,27 +84,27 @@ export default function AppPage() {
     prevAllCompleteRef.current = allMustDoComplete;
   }, [allMustDoComplete]);
 
-  const handleKeepTask = (id: string) => {
+  const handleKeepTask = useCallback((id: string) => {
     updateTask(id, { createdDate: new Date().toISOString().split('T')[0] });
-  };
+  }, [updateTask]);
 
-  const handleDismissTask = (id: string) => {
+  const handleDismissTask = useCallback((id: string) => {
     deleteTask(id);
-  };
+  }, [deleteTask]);
 
-  const handleEditTask = (id: string, newText: string) => {
+  const handleEditTask = useCallback((id: string, newText: string) => {
     updateTask(id, { text: newText, createdDate: new Date().toISOString().split('T')[0] });
-  };
+  }, [updateTask]);
 
-  const handlePlanningComplete = () => {
+  const handlePlanningComplete = useCallback(() => {
     completePlanning();
     setShowPlanning(false);
-  };
+  }, [completePlanning]);
 
-  const handleSkipPlanning = () => {
+  const handleSkipPlanning = useCallback(() => {
     skipPlanning();
     setShowPlanning(false);
-  };
+  }, [skipPlanning]);
 
   const completedCount = tasks.filter((t) => t.completed).length;
   const canAddToMustDo = mustDoTasks.length < 3;
