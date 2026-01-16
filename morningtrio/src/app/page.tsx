@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTasks } from '@/hooks/useTasks';
 import { useAppState } from '@/hooks/useAppState';
 import { TaskInput } from '@/components/TaskInput';
 import { TaskList } from '@/components/TaskList';
 import { MorningPlanning } from '@/components/MorningPlanning';
+import { CelebrationModal } from '@/components/CelebrationModal';
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 import {
@@ -45,6 +46,8 @@ export default function Home() {
 
   const [showPlanning, setShowPlanning] = useState(false);
   const [incompleteTasks, setIncompleteTasks] = useState<typeof tasks>([]);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const prevAllCompleteRef = useRef(false);
 
   useEffect(() => {
     if (isHydrated && needsPlanning && !isLoading) {
@@ -54,6 +57,18 @@ export default function Home() {
       });
     }
   }, [isHydrated, needsPlanning, isLoading, getIncompleteTasks]);
+
+  useEffect(() => {
+    if (mustDoTasks.length === 3) {
+      const allComplete = mustDoTasks.every((t) => t.completed);
+      if (allComplete && !prevAllCompleteRef.current) {
+        setShowCelebration(true);
+      }
+      prevAllCompleteRef.current = allComplete;
+    } else {
+      prevAllCompleteRef.current = false;
+    }
+  }, [mustDoTasks]);
 
   const handleKeepTask = (id: string) => {
     // Task is already in the database, just update its date
@@ -111,9 +126,14 @@ export default function Home() {
   }
 
   return (
-    <main className="space-y-6">
-      <header className="text-center space-y-1">
-        <h1 className="text-2xl font-bold text-foreground">MorningTrio</h1>
+    <>
+      <CelebrationModal
+        isOpen={showCelebration}
+        onClose={() => setShowCelebration(false)}
+      />
+      <main className="space-y-6">
+        <header className="text-center space-y-1">
+          <h1 className="text-2xl font-bold text-foreground">MorningTrio</h1>
         <p className="text-sm text-muted-foreground">
           Focus on your top 3 priorities today
         </p>
@@ -179,6 +199,7 @@ export default function Home() {
           )}
         </div>
       )}
-    </main>
+      </main>
+    </>
   );
 }
