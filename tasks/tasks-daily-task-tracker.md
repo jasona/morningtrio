@@ -37,6 +37,8 @@ domain: morningtrio.com
 - `morningtrio/src/components/TaskInput.test.tsx` - Unit tests for TaskInput (7 tests)
 - `morningtrio/src/app/layout.tsx` - Root layout with responsive container and PWA metadata
 - `morningtrio/src/app/page.tsx` - Main daily view with task management UI
+- `morningtrio/src/components/SortableTaskItem.tsx` - Draggable task item wrapper with @dnd-kit
+- `morningtrio/src/components/DroppableSection.tsx` - Droppable section container for drag-and-drop
 - `src/components/MorningPlanning.tsx` - Morning planning flow modal
 - `src/components/MorningPlanning.test.tsx` - Unit tests for MorningPlanning
 - `src/components/CarryoverStep.tsx` - Carryover review step component
@@ -120,17 +122,17 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 4.9 Write integration tests for task CRUD operations
   - [x] 4.10 Verify all task management features work correctly
 
-- [ ] 5.0 Drag-and-Drop & Reordering (FR-11 through FR-16)
-  - [ ] 5.1 Install and configure @dnd-kit: wrap app with DndContext provider
-  - [ ] 5.2 Make TaskList sections droppable with useDroppable
-  - [ ] 5.3 Make TaskItem draggable with useDraggable
-  - [ ] 5.4 Implement reorder within section (FR-11)
-  - [ ] 5.5 Implement drag from "Other Tasks" to "Must Do Today" with max-3 validation (FR-12, FR-16)
-  - [ ] 5.6 Implement drag from "Must Do Today" to "Other Tasks" (FR-13)
-  - [ ] 5.7 Add visual feedback: grab cursor, elevation shadow during drag, snap animation (FR-14)
-  - [ ] 5.8 Persist new order to IndexedDB after drop
-  - [ ] 5.9 Test drag-and-drop on touch devices
-  - [ ] 5.10 Write tests for reorder logic and section validation
+- [x] 5.0 Drag-and-Drop & Reordering (FR-11 through FR-16)
+  - [x] 5.1 Install and configure @dnd-kit: wrap app with DndContext provider
+  - [x] 5.2 Make TaskList sections droppable with useDroppable
+  - [x] 5.3 Make TaskItem draggable with useDraggable
+  - [x] 5.4 Implement reorder within section (FR-11)
+  - [x] 5.5 Implement drag from "Other Tasks" to "Must Do Today" with max-3 validation (FR-12, FR-16)
+  - [x] 5.6 Implement drag from "Must Do Today" to "Other Tasks" (FR-13)
+  - [x] 5.7 Add visual feedback: grab cursor, elevation shadow during drag, snap animation (FR-14)
+  - [x] 5.8 Persist new order to IndexedDB after drop
+  - [x] 5.9 Test drag-and-drop on touch devices
+  - [x] 5.10 Write tests for reorder logic and section validation
 
 - [ ] 6.0 Morning Planning Ritual (FR-17 through FR-25)
   - [ ] 6.1 Create `src/components/MorningPlanning.tsx` - full-screen modal container (UI-16)

@@ -28,6 +28,7 @@ export default function Home() {
     toggleComplete,
     deleteTask,
     moveToSection,
+    reorderTasks,
     clearCompleted,
   } = useTasks();
 
@@ -72,6 +73,7 @@ export default function Home() {
         onToggleComplete={toggleComplete}
         onDelete={deleteTask}
         onMoveToSection={moveToSection}
+        onReorder={reorderTasks}
       />
 
       {completedCount > 0 && (
