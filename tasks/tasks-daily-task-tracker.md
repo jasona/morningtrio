@@ -39,11 +39,10 @@ domain: morningtrio.com
 - `morningtrio/src/app/page.tsx` - Main daily view with task management UI
 - `morningtrio/src/components/SortableTaskItem.tsx` - Draggable task item wrapper with @dnd-kit
 - `morningtrio/src/components/DroppableSection.tsx` - Droppable section container for drag-and-drop
-- `src/components/MorningPlanning.tsx` - Morning planning flow modal
-- `src/components/MorningPlanning.test.tsx` - Unit tests for MorningPlanning
-- `src/components/CarryoverStep.tsx` - Carryover review step component
-- `src/components/TopThreeSelection.tsx` - Top 3 selection step component
-- `src/components/PlanningConfirmation.tsx` - Planning confirmation step
+- `morningtrio/src/components/MorningPlanning.tsx` - Full-screen morning planning flow with 3 steps
+- `morningtrio/src/components/CarryoverStep.tsx` - Carryover review with Keep/Dismiss/Edit actions
+- `morningtrio/src/components/TopThreeSelection.tsx` - Top 3 selection with add new task option
+- `morningtrio/src/components/PlanningConfirmation.tsx` - Confirmation step with motivational message
 - `src/components/CelebrationModal.tsx` - Celebration animation modal
 - `src/components/CelebrationModal.test.tsx` - Unit tests for CelebrationModal
 - `src/app/page.tsx` - Main app page (Next.js App Router)
@@ -134,22 +133,22 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 5.9 Test drag-and-drop on touch devices
   - [x] 5.10 Write tests for reorder logic and section validation
 
-- [ ] 6.0 Morning Planning Ritual (FR-17 through FR-25)
-  - [ ] 6.1 Create `src/components/MorningPlanning.tsx` - full-screen modal container (UI-16)
-  - [ ] 6.2 Implement new day detection: compare lastPlanningDate to current date (FR-17)
-  - [ ] 6.3 Create `src/components/CarryoverStep.tsx` - display yesterday's incomplete tasks (FR-18)
-  - [ ] 6.4 Add Keep/Dismiss/Edit actions for each carryover task (FR-19)
-  - [ ] 6.5 Create `src/components/TopThreeSelection.tsx` - select up to 3 tasks (FR-20, FR-21)
-  - [ ] 6.6 Allow adding new tasks during Top 3 selection
-  - [ ] 6.7 Allow adding tasks to "Other Tasks" during planning (FR-22)
-  - [ ] 6.8 Create `src/components/PlanningConfirmation.tsx` - show selected Top 3 with motivational message (FR-23)
-  - [ ] 6.9 Add progress indicator showing current step (UI-17)
-  - [ ] 6.10 Add friendly welcome copy: "Good morning! Let's plan your day." (UI-19)
-  - [ ] 6.11 Implement "Skip Planning" button to go directly to daily view (FR-24)
-  - [ ] 6.12 Skip carryover step if all previous tasks completed (FR-25)
-  - [ ] 6.13 Update lastPlanningDate after completing planning
-  - [ ] 6.14 Write unit tests for MorningPlanning flow logic
-  - [ ] 6.15 Write tests for carryover detection and task filtering
+- [x] 6.0 Morning Planning Ritual (FR-17 through FR-25)
+  - [x] 6.1 Create `src/components/MorningPlanning.tsx` - full-screen modal container (UI-16)
+  - [x] 6.2 Implement new day detection: compare lastPlanningDate to current date (FR-17)
+  - [x] 6.3 Create `src/components/CarryoverStep.tsx` - display yesterday's incomplete tasks (FR-18)
+  - [x] 6.4 Add Keep/Dismiss/Edit actions for each carryover task (FR-19)
+  - [x] 6.5 Create `src/components/TopThreeSelection.tsx` - select up to 3 tasks (FR-20, FR-21)
+  - [x] 6.6 Allow adding new tasks during Top 3 selection
+  - [x] 6.7 Allow adding tasks to "Other Tasks" during planning (FR-22)
+  - [x] 6.8 Create `src/components/PlanningConfirmation.tsx` - show selected Top 3 with motivational message (FR-23)
+  - [x] 6.9 Add progress indicator showing current step (UI-17)
+  - [x] 6.10 Add friendly welcome copy: "Good morning! Let's plan your day." (UI-19)
+  - [x] 6.11 Implement "Skip Planning" button to go directly to daily view (FR-24)
+  - [x] 6.12 Skip carryover step if all previous tasks completed (FR-25)
+  - [x] 6.13 Update lastPlanningDate after completing planning
+  - [x] 6.14 Write unit tests for MorningPlanning flow logic
+  - [x] 6.15 Write tests for carryover detection and task filtering
 
 - [ ] 7.0 Completion Celebration & Animations (FR-26, FR-27, UI-11)
   - [ ] 7.1 Add subtle checkmark animation on individual task completion (FR-27)

@@ -1,9 +1,11 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useTasks } from '@/hooks/useTasks';
 import { useAppState } from '@/hooks/useAppState';
 import { TaskInput } from '@/components/TaskInput';
 import { TaskList } from '@/components/TaskList';
+import { MorningPlanning } from '@/components/MorningPlanning';
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 import {
@@ -25,14 +27,56 @@ export default function Home() {
     otherTasks,
     isLoading,
     addTask,
+    updateTask,
     toggleComplete,
     deleteTask,
     moveToSection,
     reorderTasks,
     clearCompleted,
+    getIncompleteTasks,
   } = useTasks();
 
-  const { isHydrated } = useAppState();
+  const {
+    isHydrated,
+    needsPlanning,
+    completePlanning,
+    skipPlanning,
+  } = useAppState();
+
+  const [showPlanning, setShowPlanning] = useState(false);
+  const [incompleteTasks, setIncompleteTasks] = useState<typeof tasks>([]);
+
+  useEffect(() => {
+    if (isHydrated && needsPlanning && !isLoading) {
+      getIncompleteTasks().then((tasks) => {
+        setIncompleteTasks(tasks);
+        setShowPlanning(true);
+      });
+    }
+  }, [isHydrated, needsPlanning, isLoading, getIncompleteTasks]);
+
+  const handleKeepTask = (id: string) => {
+    // Task is already in the database, just update its date
+    updateTask(id, { createdDate: new Date().toISOString().split('T')[0] });
+  };
+
+  const handleDismissTask = (id: string) => {
+    deleteTask(id);
+  };
+
+  const handleEditTask = (id: string, newText: string) => {
+    updateTask(id, { text: newText, createdDate: new Date().toISOString().split('T')[0] });
+  };
+
+  const handlePlanningComplete = () => {
+    completePlanning();
+    setShowPlanning(false);
+  };
+
+  const handleSkipPlanning = () => {
+    skipPlanning();
+    setShowPlanning(false);
+  };
 
   const completedCount = tasks.filter((t) => t.completed).length;
   const canAddToMustDo = mustDoTasks.length < 3;
@@ -47,6 +91,22 @@ export default function Home() {
         <div className="size-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
         <p className="text-sm text-muted-foreground">Loading your tasks...</p>
       </div>
+    );
+  }
+
+  if (showPlanning) {
+    return (
+      <MorningPlanning
+        incompleteTasks={incompleteTasks}
+        allTasks={tasks}
+        onKeepTask={handleKeepTask}
+        onDismissTask={handleDismissTask}
+        onEditTask={handleEditTask}
+        onAddTask={addTask}
+        onMoveToSection={moveToSection}
+        onComplete={handlePlanningComplete}
+        onSkip={handleSkipPlanning}
+      />
     );
   }
 
