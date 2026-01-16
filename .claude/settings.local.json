@@ -3,7 +3,22 @@
     "allow": [
       "WebSearch",
       "Bash(git init:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(cd:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nchore: remove standards and tasks folders\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push)",
+      "Bash(git commit:*)",
+      "Bash(npm install:*)",
+      "Bash(npm view:*)",
+      "Bash(npx prisma:*)",
+      "Bash(npx prisma db push:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm run build:*)",
+      "Bash(timeout 15 npm run dev:*)",
+      "Bash(taskkill:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)"
     ]
   }
 }
