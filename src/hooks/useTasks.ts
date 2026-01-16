@@ -86,6 +86,9 @@ export function useTasks() {
   }
 
   async function updateTask(id: string, updates: Partial<Omit<Task, 'id' | 'userId'>>): Promise<void> {
+    // Store previous state for rollback
+    const previousTasks = tasks;
+
     // Optimistic update
     setTasks((prev) =>
       prev.map((t) => (t.id === id ? { ...t, ...updates } : t))
@@ -99,18 +102,19 @@ export function useTasks() {
       });
 
       if (!response.ok) {
-        // Revert by refetching
-        fetchTasks();
-        throw new Error('Failed to update task');
+        // Revert to previous state
+        setTasks(previousTasks);
+        console.error('Failed to update task:', response.status);
       }
     } catch (error) {
+      // Revert to previous state
+      setTasks(previousTasks);
       console.error('Error updating task:', error);
-      fetchTasks();
     }
   }
 
   async function deleteTask(id: string): Promise<void> {
-    const taskToDelete = tasks.find((t) => t.id === id);
+    const previousTasks = tasks;
 
     // Optimistic update
     setTasks((prev) => prev.filter((t) => t.id !== id));
@@ -122,16 +126,13 @@ export function useTasks() {
 
       if (!response.ok) {
         // Revert on error
-        if (taskToDelete) {
-          setTasks((prev) => [...prev, taskToDelete]);
-        }
-        throw new Error('Failed to delete task');
+        setTasks(previousTasks);
+        console.error('Failed to delete task:', response.status);
       }
     } catch (error) {
+      // Revert on error
+      setTasks(previousTasks);
       console.error('Error deleting task:', error);
-      if (taskToDelete) {
-        setTasks((prev) => [...prev, taskToDelete]);
-      }
     }
   }
 
@@ -152,6 +153,8 @@ export function useTasks() {
   }
 
   async function reorderTasks(section: TaskSection, orderedIds: string[]): Promise<void> {
+    const previousTasks = tasks;
+
     // Optimistic update
     setTasks((prev) =>
       prev.map((t) => {
@@ -176,12 +179,13 @@ export function useTasks() {
       );
     } catch (error) {
       console.error('Error reordering tasks:', error);
-      fetchTasks();
+      setTasks(previousTasks);
     }
   }
 
   async function clearCompleted(): Promise<void> {
     const completedTasks = tasks.filter((t) => t.completed);
+    const previousTasks = tasks;
 
     // Optimistic update
     setTasks((prev) => prev.filter((t) => !t.completed));
@@ -194,7 +198,7 @@ export function useTasks() {
       );
     } catch (error) {
       console.error('Error clearing completed tasks:', error);
-      fetchTasks();
+      setTasks(previousTasks);
     }
   }
 
