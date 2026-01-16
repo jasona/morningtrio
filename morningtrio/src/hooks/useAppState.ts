@@ -1,22 +1,12 @@
 'use client';
 
-import { useState, useCallback, useSyncExternalStore } from 'react';
+import { useState, useCallback } from 'react';
 import type { AppState } from '@/types/task';
 import { getTodayString, isNewDay } from '@/lib/utils';
 
-const emptySubscribe = () => () => {};
-let storageListeners: Array<() => void> = [];
-
-function subscribeToStorage(callback: () => void) {
-  storageListeners.push(callback);
-  return () => {
-    storageListeners = storageListeners.filter((l) => l !== callback);
-  };
-}
-
 const APP_STATE_KEY = 'morningtrio-app-state';
 
-function loadAppState(): AppState {
+function getInitialState(): AppState {
   if (typeof window === 'undefined') {
     return {
       currentDate: getTodayString(),
@@ -57,63 +47,48 @@ function saveAppState(state: AppState): void {
   }
 }
 
-function getServerSnapshot(): AppState {
-  return {
-    currentDate: getTodayString(),
-    lastPlanningDate: null,
-    isPlanningComplete: false,
-  };
-}
-
 export function useAppState() {
-  const initialState = useSyncExternalStore(
-    emptySubscribe,
-    loadAppState,
-    getServerSnapshot
-  );
-  
-  const [state, setState] = useState<AppState>(initialState);
-  
-  const isHydrated = useSyncExternalStore(
-    subscribeToStorage,
-    () => typeof window !== 'undefined',
-    () => false
-  );
+  const [state, setState] = useState<AppState>(getInitialState);
+  const [isHydrated] = useState(() => typeof window !== 'undefined');
 
-  const updateState = useCallback((newState: AppState) => {
-    setState(newState);
-    saveAppState(newState);
-  }, []);
-
-  const needsPlanning = isNewDay(state.lastPlanningDate) && !state.isPlanningComplete;
+  const needsPlanning = isHydrated && isNewDay(state.lastPlanningDate) && !state.isPlanningComplete;
 
   const completePlanning = useCallback(() => {
     const today = getTodayString();
-    const newState = {
-      ...state,
-      lastPlanningDate: today,
-      isPlanningComplete: true,
-    };
-    updateState(newState);
-  }, [state, updateState]);
+    setState((prev) => {
+      const newState = {
+        ...prev,
+        lastPlanningDate: today,
+        isPlanningComplete: true,
+      };
+      saveAppState(newState);
+      return newState;
+    });
+  }, []);
 
   const skipPlanning = useCallback(() => {
-    const newState = {
-      ...state,
-      isPlanningComplete: true,
-    };
-    updateState(newState);
-  }, [state, updateState]);
+    setState((prev) => {
+      const newState = {
+        ...prev,
+        isPlanningComplete: true,
+      };
+      saveAppState(newState);
+      return newState;
+    });
+  }, []);
 
   const resetForNewDay = useCallback(() => {
     const today = getTodayString();
-    const newState = {
-      currentDate: today,
-      lastPlanningDate: state.lastPlanningDate,
-      isPlanningComplete: false,
-    };
-    updateState(newState);
-  }, [state.lastPlanningDate, updateState]);
+    setState((prev) => {
+      const newState = {
+        currentDate: today,
+        lastPlanningDate: prev.lastPlanningDate,
+        isPlanningComplete: false,
+      };
+      saveAppState(newState);
+      return newState;
+    });
+  }, []);
 
   return {
     ...state,
