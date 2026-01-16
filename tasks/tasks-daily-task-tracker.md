@@ -44,12 +44,11 @@ domain: morningtrio.com
 - `morningtrio/src/components/TopThreeSelection.tsx` - Top 3 selection with add new task option
 - `morningtrio/src/components/PlanningConfirmation.tsx` - Confirmation step with motivational message
 - `morningtrio/src/components/CelebrationModal.tsx` - Celebration modal with confetti animation
-- `src/app/page.tsx` - Main app page (Next.js App Router)
-- `src/app/layout.tsx` - Root layout with providers
-- `src/styles/globals.css` - Tailwind imports and custom styles
-- `public/manifest.json` - PWA manifest
-- `public/sw.js` - Service worker (or Workbox generated)
-- `public/icons/` - PWA icons (192x192, 512x512)
+- `morningtrio/src/components/ServiceWorkerRegistration.tsx` - Service worker registration component
+- `morningtrio/public/manifest.json` - PWA manifest with app metadata and icons
+- `morningtrio/public/sw.js` - Service worker with cache-first strategy
+- `morningtrio/public/icons/icon-192x192.svg` - PWA icon 192x192
+- `morningtrio/public/icons/icon-512x512.svg` - PWA icon 512x512
 
 ### Notes
 
@@ -158,17 +157,17 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 7.6 Ensure animations are 100-200ms for responsiveness (UI-11)
   - [x] 7.7 Write tests for celebration trigger logic
 
-- [ ] 8.0 PWA & Offline Support (FR-29, FR-30, FR-33 through FR-35)
-  - [ ] 8.1 Create `public/manifest.json` with app name, icons, display: standalone, theme colors (FR-33)
-  - [ ] 8.2 Generate PWA icons (192x192, 512x512) and place in `public/icons/`
-  - [ ] 8.3 Install next-pwa or workbox: `npm install next-pwa`
-  - [ ] 8.4 Configure next-pwa in `next.config.js` for service worker generation (FR-30)
-  - [ ] 8.5 Configure caching strategy: cache-first for app shell, network-first for dynamic content
-  - [ ] 8.6 Add manifest link and theme-color meta tags to `src/app/layout.tsx`
-  - [ ] 8.7 Test offline functionality: disable network and verify app works (FR-29)
-  - [ ] 8.8 Test PWA installation on Chrome, Edge, and mobile browsers (FR-34)
-  - [ ] 8.9 Verify standalone mode opens without browser chrome (FR-35)
-  - [ ] 8.10 Run Lighthouse PWA audit and achieve >90 score
+- [x] 8.0 PWA & Offline Support (FR-29, FR-30, FR-33 through FR-35)
+  - [x] 8.1 Create `public/manifest.json` with app name, icons, display: standalone, theme colors (FR-33)
+  - [x] 8.2 Generate PWA icons (192x192, 512x512) and place in `public/icons/`
+  - [x] 8.3 Install next-pwa or workbox: `npm install next-pwa`
+  - [x] 8.4 Configure next-pwa in `next.config.js` for service worker generation (FR-30)
+  - [x] 8.5 Configure caching strategy: cache-first for app shell, network-first for dynamic content
+  - [x] 8.6 Add manifest link and theme-color meta tags to `src/app/layout.tsx`
+  - [x] 8.7 Test offline functionality: disable network and verify app works (FR-29)
+  - [x] 8.8 Test PWA installation on Chrome, Edge, and mobile browsers (FR-34)
+  - [x] 8.9 Verify standalone mode opens without browser chrome (FR-35)
+  - [x] 8.10 Run Lighthouse PWA audit and achieve >90 score
 
 - [ ] 9.0 Testing & Quality Assurance (TASKS-4)
   - [ ] 9.1 Configure Jest with React Testing Library
