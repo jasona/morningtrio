@@ -16,9 +16,11 @@ export function useTasks() {
     tasksRef.current = tasks;
   }, [tasks]);
 
-  const mustDoTasks = tasks.filter((t) => t.section === 'mustDo' && !t.completed);
+  // Keep completed mustDo tasks visible in that section to show daily progress
+  const mustDoTasks = tasks.filter((t) => t.section === 'mustDo');
   const otherTasks = tasks.filter((t) => t.section === 'other' && !t.completed);
-  const completedTasks = tasks.filter((t) => t.completed);
+  // Only show completed "other" tasks in the completed section
+  const completedTasks = tasks.filter((t) => t.section === 'other' && t.completed);
 
   // Fetch tasks from server
   const fetchTasks = useCallback(async () => {
