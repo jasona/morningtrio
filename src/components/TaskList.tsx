@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils';
 interface TaskListProps {
   mustDoTasks: Task[];
   otherTasks: Task[];
+  completedTasks: Task[];
   onToggleComplete: (id: string) => void;
   onDelete: (id: string) => void;
   onMoveToSection: (id: string, section: TaskSection) => void;
@@ -32,6 +33,7 @@ interface TaskListProps {
 export function TaskList({
   mustDoTasks,
   otherTasks,
+  completedTasks,
   onToggleComplete,
   onDelete,
   onMoveToSection,
@@ -205,6 +207,30 @@ export function TaskList({
             />
           )}
         </section>
+
+        {completedTasks.length > 0 && (
+          <section aria-labelledby="completed-tasks-heading">
+            <h2
+              id="completed-tasks-heading"
+              className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2"
+            >
+              <span className="inline-flex items-center justify-center size-5 rounded-full bg-muted text-muted-foreground text-xs">
+                {completedTasks.length}
+              </span>
+              Completed
+            </h2>
+            <div className="space-y-2">
+              {completedTasks.map((task) => (
+                <TaskItem
+                  key={task.id}
+                  task={task}
+                  onToggleComplete={onToggleComplete}
+                  onDelete={onDelete}
+                />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
 
       <DragOverlay>

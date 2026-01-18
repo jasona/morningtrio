@@ -16,8 +16,9 @@ export function useTasks() {
     tasksRef.current = tasks;
   }, [tasks]);
 
-  const mustDoTasks = tasks.filter((t) => t.section === 'mustDo');
-  const otherTasks = tasks.filter((t) => t.section === 'other');
+  const mustDoTasks = tasks.filter((t) => t.section === 'mustDo' && !t.completed);
+  const otherTasks = tasks.filter((t) => t.section === 'other' && !t.completed);
+  const completedTasks = tasks.filter((t) => t.completed);
 
   // Fetch tasks from server
   const fetchTasks = useCallback(async () => {
@@ -239,6 +240,7 @@ export function useTasks() {
     tasks,
     mustDoTasks,
     otherTasks,
+    completedTasks,
     isLoading: isLoading || authLoading,
     addTask,
     updateTask,

@@ -149,7 +149,7 @@ export function TopThreeSelection({
                   <Checkbox
                     checked={false}
                     disabled={!canSelectMore}
-                    onCheckedChange={() => onToggleSelect(task.id)}
+                    onClick={(e) => e.stopPropagation()}
                   />
                   <span className="flex-1 text-sm">{task.text}</span>
                 </div>

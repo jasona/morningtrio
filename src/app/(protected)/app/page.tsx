@@ -29,6 +29,7 @@ export default function AppPage() {
     tasks,
     mustDoTasks,
     otherTasks,
+    completedTasks,
     isLoading,
     addTask,
     updateTask,
@@ -48,10 +49,12 @@ export default function AppPage() {
   } = useAppState();
 
   const [showPlanning, setShowPlanning] = useState(false);
-  const [incompleteTasks, setIncompleteTasks] = useState<typeof tasks>([]);
   const [showCelebration, setShowCelebration] = useState(false);
   const prevAllCompleteRef = useRef(false);
   const planningInitializedRef = useRef(false);
+
+  // Compute incomplete tasks dynamically from current tasks state
+  const incompleteTasks = getIncompleteTasks();
 
   useEffect(() => {
     // Only initialize planning once
@@ -59,18 +62,16 @@ export default function AppPage() {
 
     if (isHydrated && needsPlanning && !isLoading && !authLoading) {
       planningInitializedRef.current = true;
-      const incomplete = getIncompleteTasks();
       // Only show planning if user has existing tasks to review
       // New users with no tasks skip directly to the main app
-      if (incomplete.length > 0 || tasks.length > 0) {
-        setIncompleteTasks(incomplete);
+      if (incompleteTasks.length > 0 || tasks.length > 0) {
         setShowPlanning(true);
       } else {
         // Auto-complete planning for new users with no tasks
         completePlanning();
       }
     }
-  }, [isHydrated, needsPlanning, isLoading, authLoading, getIncompleteTasks, tasks.length, completePlanning]);
+  }, [isHydrated, needsPlanning, isLoading, authLoading, incompleteTasks.length, tasks.length, completePlanning]);
 
   const allMustDoComplete = mustDoTasks.length === 3 && mustDoTasks.every((t) => t.completed);
 
@@ -106,7 +107,7 @@ export default function AppPage() {
     setShowPlanning(false);
   }, [skipPlanning]);
 
-  const completedCount = tasks.filter((t) => t.completed).length;
+  const completedCount = completedTasks.length;
   const canAddToMustDo = mustDoTasks.length < 3;
 
   const handleAddTask = async (text: string) => {
@@ -166,6 +167,7 @@ export default function AppPage() {
         <TaskList
           mustDoTasks={mustDoTasks}
           otherTasks={otherTasks}
+          completedTasks={completedTasks}
           onToggleComplete={toggleComplete}
           onDelete={deleteTask}
           onMoveToSection={moveToSection}
