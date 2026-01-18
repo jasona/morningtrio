@@ -1,4 +1,4 @@
-import { Sunrise, GripVertical, PartyPopper, Wifi } from 'lucide-react';
+import { Sunrise, GripVertical, PartyPopper, RefreshCw } from 'lucide-react';
 
 const features = [
   {
@@ -20,10 +20,10 @@ const features = [
       'Complete all 3 must-do tasks and enjoy a satisfying celebration. Small wins build momentum.',
   },
   {
-    icon: Wifi,
-    title: 'Works Offline',
+    icon: RefreshCw,
+    title: 'Fresh Start Each Day',
     description:
-      'Install as a PWA and use anywhere, even without internet. Your tasks are always available.',
+      "Yesterday's unfinished tasks? Review and decide what still matters. Every morning is a clean slate.",
   },
 ];
 

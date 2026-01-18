@@ -38,7 +38,7 @@ export function Hero() {
           </span>
           <span className="flex items-center gap-1.5">
             <CheckCircle2 className="h-4 w-4 text-green-500" />
-            Works offline
+            Syncs across devices
           </span>
           <span className="flex items-center gap-1.5">
             <CheckCircle2 className="h-4 w-4 text-green-500" />
