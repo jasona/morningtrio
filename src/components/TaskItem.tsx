@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { GripVertical, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
-import type { Task, TaskSection } from '@/types/task';
+import { GripVertical, Trash2, ArrowUp, ArrowDown, Briefcase, Home } from 'lucide-react';
+import type { Task, TaskSection, TaskListType } from '@/types/task';
 import { cn } from '@/lib/utils';
 import {
   AlertDialog,
@@ -17,12 +17,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface TaskItemProps {
   task: Task;
   onToggleComplete: (id: string) => void;
   onDelete: (id: string) => void;
   onMoveToSection?: (id: string, section: TaskSection) => void;
+  onSwitchTaskList?: (id: string, targetList: TaskListType) => void;
   showMoveButtons?: boolean;
   canMoveToMustDo?: boolean;
   dragHandleProps?: React.HTMLAttributes<HTMLButtonElement>;
@@ -33,6 +40,7 @@ export function TaskItem({
   onToggleComplete,
   onDelete,
   onMoveToSection,
+  onSwitchTaskList,
   showMoveButtons = false,
   canMoveToMustDo = true,
   dragHandleProps,
@@ -82,44 +90,84 @@ export function TaskItem({
         {task.text}
       </span>
 
-      {showMoveButtons && onMoveToSection && (
+      <TooltipProvider delayDuration={300}>
         <div className="flex gap-1 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100 transition-opacity">
-          {task.section === 'other' && canMoveToMustDo && (
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => onMoveToSection(task.id, 'mustDo')}
-              aria-label="Move to Must Do Today"
-              className="text-primary"
-            >
-              <ArrowUp className="size-4" />
-            </Button>
+          {showMoveButtons && onMoveToSection && (
+            <>
+              {task.section === 'other' && canMoveToMustDo && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => onMoveToSection(task.id, 'mustDo')}
+                      aria-label="Move to Must Do Today"
+                      className="text-primary"
+                    >
+                      <ArrowUp className="size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Move to Must Do Today</TooltipContent>
+                </Tooltip>
+              )}
+              {task.section === 'mustDo' && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => onMoveToSection(task.id, 'other')}
+                      aria-label="Move to Other Tasks"
+                      className="text-muted-foreground"
+                    >
+                      <ArrowDown className="size-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Move to Other Tasks</TooltipContent>
+                </Tooltip>
+              )}
+            </>
           )}
-          {task.section === 'mustDo' && (
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => onMoveToSection(task.id, 'other')}
-              aria-label="Move to Other Tasks"
-              className="text-muted-foreground"
-            >
-              <ArrowDown className="size-4" />
-            </Button>
+          {onSwitchTaskList && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => onSwitchTaskList(task.id, task.taskList === 'personal' ? 'work' : 'personal')}
+                  aria-label={task.taskList === 'personal' ? 'Move to Work list' : 'Move to Personal list'}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  {task.taskList === 'personal' ? (
+                    <Briefcase className="size-4" />
+                  ) : (
+                    <Home className="size-4" />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {task.taskList === 'personal' ? 'Move to Work list' : 'Move to Personal list'}
+              </TooltipContent>
+            </Tooltip>
           )}
         </div>
-      )}
 
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
-            aria-label="Delete task"
-          >
-            <Trash2 className="size-4" />
-          </Button>
-        </AlertDialogTrigger>
+        <AlertDialog>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                  aria-label="Delete task"
+                >
+                  <Trash2 className="size-4" />
+                </Button>
+              </AlertDialogTrigger>
+            </TooltipTrigger>
+            <TooltipContent>Delete task</TooltipContent>
+          </Tooltip>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete task?</AlertDialogTitle>
@@ -135,7 +183,8 @@ export function TaskItem({
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+        </AlertDialog>
+      </TooltipProvider>
     </div>
   );
 }

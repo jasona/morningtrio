@@ -248,6 +248,27 @@ export function useTasks(activeTaskList: TaskListType = 'personal') {
     return tasks.filter((t) => !t.completed && t.taskList === activeTaskList);
   }, [tasks, activeTaskList]);
 
+  const switchTaskList = useCallback(async (id: string, targetList: TaskListType): Promise<void> => {
+    // Optimistic update - move task to target list
+    setTasks((prev) => prev.map((t) =>
+      t.id === id ? { ...t, taskList: targetList } : t
+    ));
+
+    try {
+      const response = await fetch(`/api/tasks/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ taskList: targetList }),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to switch task list:', response.status);
+      }
+    } catch (error) {
+      console.error('Error switching task list:', error);
+    }
+  }, []);
+
   return {
     tasks,
     mustDoTasks,
@@ -262,6 +283,7 @@ export function useTasks(activeTaskList: TaskListType = 'personal') {
     reorderTasks,
     clearCompleted,
     getIncompleteTasks,
+    switchTaskList,
     refreshTasks: fetchTasks,
   };
 }

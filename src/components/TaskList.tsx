@@ -15,7 +15,7 @@ import {
 } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useState } from 'react';
-import type { Task, TaskSection } from '@/types/task';
+import type { Task, TaskSection, TaskListType } from '@/types/task';
 import { DroppableSection } from './DroppableSection';
 import { TaskItem } from './TaskItem';
 import { cn } from '@/lib/utils';
@@ -27,6 +27,7 @@ interface TaskListProps {
   onToggleComplete: (id: string) => void;
   onDelete: (id: string) => void;
   onMoveToSection: (id: string, section: TaskSection) => void;
+  onSwitchTaskList: (id: string, targetList: TaskListType) => void;
   onReorder: (section: TaskSection, orderedIds: string[]) => void;
 }
 
@@ -37,6 +38,7 @@ export function TaskList({
   onToggleComplete,
   onDelete,
   onMoveToSection,
+  onSwitchTaskList,
   onReorder,
 }: TaskListProps) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -153,6 +155,7 @@ export function TaskList({
                 onToggleComplete={onToggleComplete}
                 onDelete={onDelete}
                 onMoveToSection={onMoveToSection}
+                onSwitchTaskList={onSwitchTaskList}
                 canMoveToMustDo={canMoveToMustDo}
               >
                 <p className="text-sm text-muted-foreground py-4 text-center">
@@ -166,6 +169,7 @@ export function TaskList({
                 onToggleComplete={onToggleComplete}
                 onDelete={onDelete}
                 onMoveToSection={onMoveToSection}
+                onSwitchTaskList={onSwitchTaskList}
                 canMoveToMustDo={canMoveToMustDo}
               />
             )}
@@ -190,6 +194,7 @@ export function TaskList({
               onToggleComplete={onToggleComplete}
               onDelete={onDelete}
               onMoveToSection={onMoveToSection}
+              onSwitchTaskList={onSwitchTaskList}
               canMoveToMustDo={canMoveToMustDo}
             >
               <p className="text-sm text-muted-foreground py-4 text-center border border-dashed border-border rounded-xl">
@@ -203,6 +208,7 @@ export function TaskList({
               onToggleComplete={onToggleComplete}
               onDelete={onDelete}
               onMoveToSection={onMoveToSection}
+              onSwitchTaskList={onSwitchTaskList}
               canMoveToMustDo={canMoveToMustDo}
             />
           )}
@@ -226,6 +232,7 @@ export function TaskList({
                   task={task}
                   onToggleComplete={onToggleComplete}
                   onDelete={onDelete}
+                  onSwitchTaskList={onSwitchTaskList}
                 />
               ))}
             </div>

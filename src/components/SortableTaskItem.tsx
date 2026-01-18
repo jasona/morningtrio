@@ -3,7 +3,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { TaskItem } from './TaskItem';
-import type { Task, TaskSection } from '@/types/task';
+import type { Task, TaskSection, TaskListType } from '@/types/task';
 import { cn } from '@/lib/utils';
 
 interface SortableTaskItemProps {
@@ -11,6 +11,7 @@ interface SortableTaskItemProps {
   onToggleComplete: (id: string) => void;
   onDelete: (id: string) => void;
   onMoveToSection?: (id: string, section: TaskSection) => void;
+  onSwitchTaskList?: (id: string, targetList: TaskListType) => void;
   showMoveButtons?: boolean;
   canMoveToMustDo?: boolean;
 }
@@ -20,6 +21,7 @@ export function SortableTaskItem({
   onToggleComplete,
   onDelete,
   onMoveToSection,
+  onSwitchTaskList,
   showMoveButtons = false,
   canMoveToMustDo = true,
 }: SortableTaskItemProps) {
@@ -57,6 +59,7 @@ export function SortableTaskItem({
         onToggleComplete={onToggleComplete}
         onDelete={onDelete}
         onMoveToSection={onMoveToSection}
+        onSwitchTaskList={onSwitchTaskList}
         showMoveButtons={showMoveButtons}
         canMoveToMustDo={canMoveToMustDo}
         dragHandleProps={{

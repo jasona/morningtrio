@@ -5,7 +5,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import type { Task, TaskSection } from '@/types/task';
+import type { Task, TaskSection, TaskListType } from '@/types/task';
 import { SortableTaskItem } from './SortableTaskItem';
 import { cn } from '@/lib/utils';
 
@@ -15,6 +15,7 @@ interface DroppableSectionProps {
   onToggleComplete: (id: string) => void;
   onDelete: (id: string) => void;
   onMoveToSection: (id: string, section: TaskSection) => void;
+  onSwitchTaskList: (id: string, targetList: TaskListType) => void;
   canMoveToMustDo: boolean;
   children?: React.ReactNode;
 }
@@ -25,6 +26,7 @@ export function DroppableSection({
   onToggleComplete,
   onDelete,
   onMoveToSection,
+  onSwitchTaskList,
   canMoveToMustDo,
   children,
 }: DroppableSectionProps) {
@@ -56,6 +58,7 @@ export function DroppableSection({
               onToggleComplete={onToggleComplete}
               onDelete={onDelete}
               onMoveToSection={onMoveToSection}
+              onSwitchTaskList={onSwitchTaskList}
               showMoveButtons
               canMoveToMustDo={canMoveToMustDo}
             />

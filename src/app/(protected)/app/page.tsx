@@ -48,6 +48,7 @@ export default function AppPage() {
     toggleComplete,
     deleteTask,
     moveToSection,
+    switchTaskList,
     reorderTasks,
     clearCompleted,
     getIncompleteTasks,
@@ -190,6 +191,7 @@ export default function AppPage() {
           onToggleComplete={toggleComplete}
           onDelete={deleteTask}
           onMoveToSection={moveToSection}
+          onSwitchTaskList={switchTaskList}
           onReorder={reorderTasks}
         />
 
