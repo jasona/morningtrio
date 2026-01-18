@@ -19,16 +19,17 @@ model User {
 }
 
 model Task {
-  id          String   @id
-  userId      String
-  text        String
-  completed   Boolean  @default(false)
-  section     String   @default("other")
-  orderIndex  Int      @default(0)
-  createdDate String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String   @id
+  userId        String
+  text          String
+  completed     Boolean  @default(false)
+  section       String   @default("other")
+  orderIndex    Int      @default(0)
+  createdDate   String
+  completedDate String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([userId, section])

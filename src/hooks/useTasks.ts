@@ -16,11 +16,14 @@ export function useTasks() {
     tasksRef.current = tasks;
   }, [tasks]);
 
-  // Keep completed mustDo tasks visible in that section to show daily progress
-  const mustDoTasks = tasks.filter((t) => t.section === 'mustDo');
+  const today = getTodayString();
+  // Keep mustDo tasks that are either incomplete OR completed today
+  const mustDoTasks = tasks.filter((t) => t.section === 'mustDo' && (!t.completed || t.completedDate === today));
   const otherTasks = tasks.filter((t) => t.section === 'other' && !t.completed);
-  // Only show completed "other" tasks in the completed section
-  const completedTasks = tasks.filter((t) => t.section === 'other' && t.completed);
+  // Completed section: completed "other" tasks + mustDo tasks completed on previous days
+  const completedTasks = tasks.filter((t) =>
+    t.completed && (t.section === 'other' || (t.section === 'mustDo' && t.completedDate !== today))
+  );
 
   // Fetch tasks from server
   const fetchTasks = useCallback(async () => {
@@ -63,6 +66,7 @@ export function useTasks() {
       section,
       orderIndex: 0, // Will be set by server or recalculated
       createdDate: getTodayString(),
+      completedDate: null,
     };
 
     // Optimistic update
@@ -139,17 +143,18 @@ export function useTasks() {
     const task = tasksRef.current.find((t) => t.id === id);
     if (!task) return;
     const newCompleted = !task.completed;
+    const newCompletedDate = newCompleted ? getTodayString() : null;
 
     // Optimistic update
     setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, completed: newCompleted } : t))
+      prev.map((t) => (t.id === id ? { ...t, completed: newCompleted, completedDate: newCompletedDate } : t))
     );
 
     try {
       const response = await fetch(`/api/tasks/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ completed: newCompleted }),
+        body: JSON.stringify({ completed: newCompleted, completedDate: newCompletedDate }),
       });
 
       if (!response.ok) {

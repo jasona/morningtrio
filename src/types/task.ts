@@ -8,6 +8,7 @@ export interface Task {
   section: TaskSection;
   orderIndex: number;
   createdDate: string;
+  completedDate: string | null;
 }
 
 export interface AppState {
