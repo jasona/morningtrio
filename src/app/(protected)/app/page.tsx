@@ -64,6 +64,9 @@ export default function AppPage() {
   // Compute incomplete tasks dynamically from current tasks state
   const incompleteTasks = getIncompleteTasks();
 
+  // Filter all tasks by active list for planning
+  const listTasks = tasks.filter((t) => t.taskList === activeTaskList);
+
   useEffect(() => {
     // Only initialize planning once per list
     if (planningInitializedRef.current[activeTaskList]) return;
@@ -72,14 +75,14 @@ export default function AppPage() {
       planningInitializedRef.current[activeTaskList] = true;
       // Only show planning if user has existing tasks to review
       // New users with no tasks skip directly to the main app
-      if (incompleteTasks.length > 0 || tasks.length > 0) {
+      if (incompleteTasks.length > 0 || listTasks.length > 0) {
         setShowPlanning(true);
       } else {
         // Auto-complete planning for new users with no tasks
         completePlanning();
       }
     }
-  }, [isHydrated, needsPlanning, isLoading, authLoading, incompleteTasks.length, tasks.length, completePlanning, activeTaskList]);
+  }, [isHydrated, needsPlanning, isLoading, authLoading, incompleteTasks.length, listTasks.length, completePlanning, activeTaskList]);
 
   const allMustDoComplete = mustDoTasks.length === 3 && mustDoTasks.every((t) => t.completed);
 
@@ -136,7 +139,7 @@ export default function AppPage() {
       <MorningPlanning
         taskList={activeTaskList}
         incompleteTasks={incompleteTasks}
-        allTasks={tasks}
+        allTasks={listTasks}
         onKeepTask={handleKeepTask}
         onDismissTask={handleDismissTask}
         onEditTask={handleEditTask}
