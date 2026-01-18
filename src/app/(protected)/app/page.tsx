@@ -6,6 +6,7 @@ import { useAppState } from '@/hooks/useAppState';
 import { useAuth } from '@/hooks/useAuth';
 import { TaskInput } from '@/components/TaskInput';
 import { TaskList } from '@/components/TaskList';
+import { TaskListSwitcher } from '@/components/TaskListSwitcher';
 import { MorningPlanning } from '@/components/MorningPlanning';
 import { CelebrationModal } from '@/components/CelebrationModal';
 import { AuthStatus } from '@/components/AuthStatus';
@@ -26,6 +27,17 @@ import {
 export default function AppPage() {
   const { isLoading: authLoading } = useAuth();
   const {
+    isHydrated,
+    activeTaskList,
+    needsPlanning,
+    workNeedsPlanning,
+    personalNeedsPlanning,
+    setActiveTaskList,
+    completePlanning,
+    skipPlanning,
+  } = useAppState();
+
+  const {
     tasks,
     mustDoTasks,
     otherTasks,
@@ -39,29 +51,25 @@ export default function AppPage() {
     reorderTasks,
     clearCompleted,
     getIncompleteTasks,
-  } = useTasks();
-
-  const {
-    isHydrated,
-    needsPlanning,
-    completePlanning,
-    skipPlanning,
-  } = useAppState();
+  } = useTasks(activeTaskList);
 
   const [showPlanning, setShowPlanning] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const prevAllCompleteRef = useRef(false);
-  const planningInitializedRef = useRef(false);
+  const planningInitializedRef = useRef<{ work: boolean; personal: boolean }>({
+    work: false,
+    personal: false,
+  });
 
   // Compute incomplete tasks dynamically from current tasks state
   const incompleteTasks = getIncompleteTasks();
 
   useEffect(() => {
-    // Only initialize planning once
-    if (planningInitializedRef.current) return;
+    // Only initialize planning once per list
+    if (planningInitializedRef.current[activeTaskList]) return;
 
     if (isHydrated && needsPlanning && !isLoading && !authLoading) {
-      planningInitializedRef.current = true;
+      planningInitializedRef.current[activeTaskList] = true;
       // Only show planning if user has existing tasks to review
       // New users with no tasks skip directly to the main app
       if (incompleteTasks.length > 0 || tasks.length > 0) {
@@ -71,7 +79,7 @@ export default function AppPage() {
         completePlanning();
       }
     }
-  }, [isHydrated, needsPlanning, isLoading, authLoading, incompleteTasks.length, tasks.length, completePlanning]);
+  }, [isHydrated, needsPlanning, isLoading, authLoading, incompleteTasks.length, tasks.length, completePlanning, activeTaskList]);
 
   const allMustDoComplete = mustDoTasks.length === 3 && mustDoTasks.every((t) => t.completed);
 
@@ -126,6 +134,7 @@ export default function AppPage() {
   if (showPlanning) {
     return (
       <MorningPlanning
+        taskList={activeTaskList}
         incompleteTasks={incompleteTasks}
         allTasks={tasks}
         onKeepTask={handleKeepTask}
@@ -150,11 +159,18 @@ export default function AppPage() {
           <div>
             <h1 className="text-2xl font-bold text-foreground">MorningTrio</h1>
             <p className="text-sm text-muted-foreground">
-              Focus on your top 3 priorities today
+              Your top 3 {activeTaskList} priorities
             </p>
           </div>
           <AuthStatus />
         </header>
+
+        <TaskListSwitcher
+          activeList={activeTaskList}
+          onSwitch={setActiveTaskList}
+          workNeedsPlanning={workNeedsPlanning}
+          personalNeedsPlanning={personalNeedsPlanning}
+        />
 
         <TaskInput onAddTask={handleAddTask} />
 

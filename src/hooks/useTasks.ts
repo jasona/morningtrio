@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { Task, TaskSection } from '@/types/task';
+import type { Task, TaskSection, TaskListType } from '@/types/task';
 import { generateId, getTodayString } from '@/lib/utils';
 import { useAuth } from './useAuth';
 
-export function useTasks() {
+export function useTasks(activeTaskList: TaskListType = 'personal') {
   const { userId, isAuthenticated, isLoading: authLoading } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -17,11 +17,15 @@ export function useTasks() {
   }, [tasks]);
 
   const today = getTodayString();
+
+  // Filter tasks by active task list first
+  const listTasks = tasks.filter((t) => t.taskList === activeTaskList);
+
   // Keep mustDo tasks that are either incomplete OR completed today
-  const mustDoTasks = tasks.filter((t) => t.section === 'mustDo' && (!t.completed || t.completedDate === today));
-  const otherTasks = tasks.filter((t) => t.section === 'other' && !t.completed);
+  const mustDoTasks = listTasks.filter((t) => t.section === 'mustDo' && (!t.completed || t.completedDate === today));
+  const otherTasks = listTasks.filter((t) => t.section === 'other' && !t.completed);
   // Completed section: completed "other" tasks + mustDo tasks completed on previous days
-  const completedTasks = tasks.filter((t) =>
+  const completedTasks = listTasks.filter((t) =>
     t.completed && (t.section === 'other' || (t.section === 'mustDo' && t.completedDate !== today))
   );
 
@@ -64,6 +68,7 @@ export function useTasks() {
       text,
       completed: false,
       section,
+      taskList: activeTaskList,
       orderIndex: 0, // Will be set by server or recalculated
       createdDate: getTodayString(),
       completedDate: null,
@@ -71,7 +76,7 @@ export function useTasks() {
 
     // Optimistic update
     setTasks((prev) => {
-      const sectionTasks = prev.filter((t) => t.section === section);
+      const sectionTasks = prev.filter((t) => t.section === section && t.taskList === activeTaskList);
       const maxOrder = sectionTasks.length > 0
         ? Math.max(...sectionTasks.map((t) => t.orderIndex))
         : -1;
@@ -97,7 +102,7 @@ export function useTasks() {
     }
 
     return newTask;
-  }, [userId]);
+  }, [userId, activeTaskList]);
 
   const updateTask = useCallback(async (id: string, updates: Partial<Omit<Task, 'id' | 'userId'>>): Promise<void> => {
     // Optimistic update
@@ -167,7 +172,7 @@ export function useTasks() {
 
   const moveToSection = useCallback(async (id: string, newSection: TaskSection): Promise<void> => {
     setTasks((prev) => {
-      const targetTasks = prev.filter((t) => t.section === newSection);
+      const targetTasks = prev.filter((t) => t.section === newSection && t.taskList === activeTaskList);
       const maxOrder = targetTasks.length > 0
         ? Math.max(...targetTasks.map((t) => t.orderIndex))
         : -1;
@@ -189,7 +194,7 @@ export function useTasks() {
     } catch (error) {
       console.error('Error moving task:', error);
     }
-  }, []);
+  }, [activeTaskList]);
 
   const reorderTasks = useCallback(async (section: TaskSection, orderedIds: string[]): Promise<void> => {
     // Optimistic update
@@ -222,10 +227,10 @@ export function useTasks() {
   const clearCompleted = useCallback(async (): Promise<void> => {
     let completedTaskIds: string[] = [];
 
-    // Optimistic update and capture IDs
+    // Optimistic update and capture IDs - only clear completed tasks in active list
     setTasks((prev) => {
-      completedTaskIds = prev.filter((t) => t.completed).map((t) => t.id);
-      return prev.filter((t) => !t.completed);
+      completedTaskIds = prev.filter((t) => t.completed && t.taskList === activeTaskList).map((t) => t.id);
+      return prev.filter((t) => !(t.completed && t.taskList === activeTaskList));
     });
 
     try {
@@ -237,11 +242,11 @@ export function useTasks() {
     } catch (error) {
       console.error('Error clearing completed tasks:', error);
     }
-  }, []);
+  }, [activeTaskList]);
 
   const getIncompleteTasks = useCallback((): Task[] => {
-    return tasks.filter((t) => !t.completed);
-  }, [tasks]);
+    return tasks.filter((t) => !t.completed && t.taskList === activeTaskList);
+  }, [tasks, activeTaskList]);
 
   return {
     tasks,

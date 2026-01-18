@@ -24,6 +24,7 @@ model Task {
   text          String
   completed     Boolean  @default(false)
   section       String   @default("other")
+  taskList      String   @default("personal")
   orderIndex    Int      @default(0)
   createdDate   String
   completedDate String?
@@ -33,4 +34,6 @@ model Task {
 
   @@index([userId])
   @@index([userId, section])
+  @@index([userId, taskList])
+  @@index([userId, taskList, section])
 }

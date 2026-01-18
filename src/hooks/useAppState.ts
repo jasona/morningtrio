@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import type { AppState } from '@/types/task';
+import type { AppState, TaskListType } from '@/types/task';
 import { getTodayString, isNewDay } from '@/lib/utils';
 import { useAuth } from './useAuth';
 
@@ -14,9 +14,27 @@ function getAppStateKey(userId: string | null): string {
 function getInitialState(): AppState {
   return {
     currentDate: getTodayString(),
-    lastPlanningDate: null,
-    isPlanningComplete: false,
+    activeTaskList: 'personal',
+    planningState: {
+      work: { lastPlanningDate: null, isPlanningComplete: false },
+      personal: { lastPlanningDate: null, isPlanningComplete: false },
+    },
   };
+}
+
+interface OldAppState {
+  currentDate: string;
+  lastPlanningDate: string | null;
+  isPlanningComplete: boolean;
+}
+
+function isOldFormat(parsed: unknown): parsed is OldAppState {
+  return (
+    typeof parsed === 'object' &&
+    parsed !== null &&
+    'isPlanningComplete' in parsed &&
+    !('planningState' in parsed)
+  );
 }
 
 function loadAppState(userId: string | null): AppState {
@@ -28,17 +46,43 @@ function loadAppState(userId: string | null): AppState {
     const key = getAppStateKey(userId);
     const stored = localStorage.getItem(key);
     if (stored) {
-      const parsed = JSON.parse(stored) as AppState;
+      const parsed = JSON.parse(stored);
       const today = getTodayString();
 
-      if (parsed.currentDate !== today) {
+      // Migration: Convert old format to new format
+      if (isOldFormat(parsed)) {
         return {
           currentDate: today,
-          lastPlanningDate: parsed.lastPlanningDate,
-          isPlanningComplete: false,
+          activeTaskList: 'personal',
+          planningState: {
+            work: { lastPlanningDate: null, isPlanningComplete: false },
+            personal: {
+              lastPlanningDate: parsed.lastPlanningDate,
+              isPlanningComplete: parsed.currentDate === today ? parsed.isPlanningComplete : false,
+            },
+          },
         };
       }
-      return parsed;
+
+      // New format - reset planning completion if it's a new day
+      const appState = parsed as AppState;
+      if (appState.currentDate !== today) {
+        return {
+          currentDate: today,
+          activeTaskList: appState.activeTaskList,
+          planningState: {
+            work: {
+              lastPlanningDate: appState.planningState.work.lastPlanningDate,
+              isPlanningComplete: false,
+            },
+            personal: {
+              lastPlanningDate: appState.planningState.personal.lastPlanningDate,
+              isPlanningComplete: false,
+            },
+          },
+        };
+      }
+      return appState;
     }
   } catch {
     // Ignore parse errors
@@ -68,15 +112,42 @@ export function useAppState() {
     }
   }, [userId, authLoading]);
 
-  const needsPlanning = isHydrated && isNewDay(state.lastPlanningDate) && !state.isPlanningComplete;
+  const activeTaskList = state.activeTaskList;
+  const activePlanningState = state.planningState[activeTaskList];
+
+  const needsPlanning = isHydrated &&
+    isNewDay(activePlanningState.lastPlanningDate) &&
+    !activePlanningState.isPlanningComplete;
+
+  // Check if each list needs planning (for indicator dots)
+  const workNeedsPlanning = isHydrated &&
+    isNewDay(state.planningState.work.lastPlanningDate) &&
+    !state.planningState.work.isPlanningComplete;
+
+  const personalNeedsPlanning = isHydrated &&
+    isNewDay(state.planningState.personal.lastPlanningDate) &&
+    !state.planningState.personal.isPlanningComplete;
+
+  const setActiveTaskList = useCallback((list: TaskListType) => {
+    setState((prev) => {
+      const newState = { ...prev, activeTaskList: list };
+      saveAppState(newState, userId);
+      return newState;
+    });
+  }, [userId]);
 
   const completePlanning = useCallback(() => {
     const today = getTodayString();
     setState((prev) => {
       const newState = {
         ...prev,
-        lastPlanningDate: today,
-        isPlanningComplete: true,
+        planningState: {
+          ...prev.planningState,
+          [prev.activeTaskList]: {
+            lastPlanningDate: today,
+            isPlanningComplete: true,
+          },
+        },
       };
       saveAppState(newState, userId);
       return newState;
@@ -87,7 +158,13 @@ export function useAppState() {
     setState((prev) => {
       const newState = {
         ...prev,
-        isPlanningComplete: true,
+        planningState: {
+          ...prev.planningState,
+          [prev.activeTaskList]: {
+            ...prev.planningState[prev.activeTaskList],
+            isPlanningComplete: true,
+          },
+        },
       };
       saveAppState(newState, userId);
       return newState;
@@ -98,9 +175,12 @@ export function useAppState() {
     const today = getTodayString();
     setState((prev) => {
       const newState = {
+        ...prev,
         currentDate: today,
-        lastPlanningDate: prev.lastPlanningDate,
-        isPlanningComplete: false,
+        planningState: {
+          work: { ...prev.planningState.work, isPlanningComplete: false },
+          personal: { ...prev.planningState.personal, isPlanningComplete: false },
+        },
       };
       saveAppState(newState, userId);
       return newState;
@@ -111,6 +191,9 @@ export function useAppState() {
     ...state,
     isHydrated,
     needsPlanning,
+    workNeedsPlanning,
+    personalNeedsPlanning,
+    setActiveTaskList,
     completePlanning,
     skipPlanning,
     resetForNewDay,

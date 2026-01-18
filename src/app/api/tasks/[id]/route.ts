@@ -31,8 +31,10 @@ export async function PUT(
         text: body.text ?? existingTask.text,
         completed: body.completed ?? existingTask.completed,
         section: body.section ?? existingTask.section,
+        taskList: body.taskList ?? existingTask.taskList,
         orderIndex: body.orderIndex ?? existingTask.orderIndex,
         createdDate: body.createdDate ?? existingTask.createdDate,
+        completedDate: body.completedDate !== undefined ? body.completedDate : existingTask.completedDate,
       },
     });
 

@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { id, text, completed, section, orderIndex, createdDate } = body;
+    const { id, text, completed, section, taskList, orderIndex, createdDate } = body;
 
     if (!id || !text) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -44,6 +44,7 @@ export async function POST(request: Request) {
         text,
         completed: completed ?? false,
         section: section ?? 'other',
+        taskList: taskList ?? 'personal',
         orderIndex: orderIndex ?? 0,
         createdDate: createdDate ?? new Date().toISOString().split('T')[0],
       },

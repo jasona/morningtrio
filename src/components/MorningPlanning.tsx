@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { Task } from '@/types/task';
+import type { Task, TaskListType } from '@/types/task';
 import { Button } from '@/components/ui/button';
 import { CarryoverStep } from './CarryoverStep';
 import { TopThreeSelection } from './TopThreeSelection';
@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 type PlanningStep = 'welcome' | 'carryover' | 'top-three' | 'confirmation';
 
 interface MorningPlanningProps {
+  taskList: TaskListType;
   incompleteTasks: Task[];
   allTasks: Task[];
   onKeepTask: (id: string) => void;
@@ -23,6 +24,7 @@ interface MorningPlanningProps {
 }
 
 export function MorningPlanning({
+  taskList,
   incompleteTasks,
   allTasks,
   onKeepTask,
@@ -33,6 +35,7 @@ export function MorningPlanning({
   onComplete,
   onSkip,
 }: MorningPlanningProps) {
+  const listLabel = taskList === 'work' ? 'work' : 'personal';
   const [step, setStep] = useState<PlanningStep>('welcome');
   const [selectedTopThree, setSelectedTopThree] = useState<string[]>([]);
   const [keptTasks, setKeptTasks] = useState<Task[]>([]);
@@ -119,7 +122,7 @@ export function MorningPlanning({
               <div className="text-center space-y-4 animate-in fade-in duration-500">
                 <h1 className="text-3xl font-bold text-primary">Good Morning!</h1>
                 <p className="text-lg text-muted-foreground">
-                  Let&apos;s plan your day.
+                  Let&apos;s plan your <span className="font-medium text-foreground">{listLabel}</span> tasks.
                 </p>
                 <div className="pt-4">
                   <div className="size-8 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto" />
